@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Code\CustomMembershipProvider.cs" />
     <Compile Include="Areas\Admin\Code\SessionHelper.cs" />
     <Compile Include="Areas\Admin\Code\UserSession.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
