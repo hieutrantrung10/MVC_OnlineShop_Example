@@ -16,7 +16,7 @@ namespace OnlineShopv2.Areas.Admin.Controllers
         {
             var dao = new ContentDao();
             var model = dao.ListAllPaging(page, pageSize);
-            return View(model);
+            return View(model as IPagedList<Content>);
         }
         [HttpGet]
         public ActionResult Create()
@@ -54,17 +54,26 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             var dao = new ContentDao();
             var content = dao.GetByID(id);
             SetViewBag(content.CategoryID);
-            return View();
+            return View(content);
         }
        
         [HttpPost]
-        public ActionResult Edit(Content model)
+        public ActionResult Edit(Content content)
         {
             if (ModelState.IsValid)
             {
-                
+                var dao = new ContentDao();
+                var result = dao.Update(content);
+                if (result)
+                {
+                    return RedirectToAction("Index", "Content");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cập nhật tin tức thất bại !!!");
+                }
             }
-            SetViewBag(model.CategoryID);
+            SetViewBag(content.CategoryID);
             return View();
         }
         public void SetViewBag(long ? selectedId = null)

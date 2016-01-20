@@ -32,5 +32,34 @@ namespace Model.Dao
 
             return content.ID; 
         }
+
+        public bool Update(Content cont)
+        {
+            try
+            {
+                var content = db.Contents.Find(cont.ID);
+                content.Name = cont.Name;
+                content.MetaTitle = cont.MetaTitle;
+                content.Description = cont.Description;
+                content.Image = cont.Image;
+                content.CategoryID = cont.CategoryID;
+                content.Detail = cont.Detail;
+                content.Warranty = cont.Warranty;
+                content.ModifiedBy = cont.ModifiedBy;
+                content.ModifiedDate = DateTime.Now;
+                content.MetaKeywords = cont.MetaKeywords;
+                content.MetaDescriptions = cont.MetaDescriptions;
+                content.Status = cont.Status;
+                content.Tags = cont.Tags;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+            
+        }
     }
 }

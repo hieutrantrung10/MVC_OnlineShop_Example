@@ -1,16 +1,16 @@
 ﻿@model Model.EF.Content
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Edit";
     Layout = "~/Areas/Admin/Views/Shared/_Layouts.cshtml";
 }
 
 @section header{
-    Tạo tin tức mới    
+    Chỉnh sửa tin tức
 }
 @section jsFooter{
-<script>
-   
+    <script>
+
     $('#btnSelectImage').on('click', function (e) {
         e.preventDefault();
             var finder = new CKFinder();
@@ -22,12 +22,12 @@
     var editor = CKEDITOR.replace('txtContent', {
         customConfig: '/assets/admin/js/plugins/ckeditor/config.js',
     });
-</script>
+    </script>
 }
-@using (Html.BeginForm("Create","Content", FormMethod.Post)) 
+@using (Html.BeginForm("Edit","Content",FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Content</h4>
         <hr />
@@ -59,7 +59,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Image, new { htmlAttributes = new { @class = "form-control"},id="txtImage" })
+                @Html.TextBoxFor(model => model.Image, new { htmlAttributes = new { @class = "form-control" }, id = "txtImage" })
                 <a href="#" id="btnSelectImage">Chọn ảnh</a>
                 @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
             </div>
@@ -68,7 +68,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CategoryID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.CategoryID, null,new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.CategoryID, null, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -173,7 +173,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Tạo mới" class="btn btn-default" />
+                <input type="submit" value="Cập nhật" class="btn btn-default" />
             </div>
         </div>
     </div>
