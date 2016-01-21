@@ -20,9 +20,14 @@ namespace Model.Dao
             return db.Contents.Find(id);
         }
         //test trả về danh sách các bài viết
-        public IEnumerable<Content> ListAllPaging(int page, int pageSize)
+        public IEnumerable<Content> ListAllPaging(string searchString,int page, int pageSize)
         {
-            return db.Contents.OrderByDescending(x=>x.CreatedDate).ToPagedList(page,pageSize);
+            IQueryable<Content> model = db.Contents;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Name.Contains(searchString) || x.CreatedBy.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
         }
         //test thêm mới một tin tức
         public long Insert(Content content)
@@ -57,6 +62,22 @@ namespace Model.Dao
             catch (Exception)
             {
 
+                return false;
+            }
+            
+        }
+
+        public bool Delete(long id)
+        {
+            try
+            {
+                var content = db.Contents.Find(id);
+                db.Contents.Remove(content);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
             }
             

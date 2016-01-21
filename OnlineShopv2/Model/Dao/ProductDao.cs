@@ -19,9 +19,14 @@ namespace Model.Dao
             return db.Products.Find(id);
         }
 
-        public IEnumerable<Product> ListAllPaging(int page, int pageSize)
+        public IEnumerable<Product> ListAllPaging(string searchString,int page, int pageSize)
         {
-            return db.Products.OrderByDescending(x=>x.CreatedDate).ToPagedList(page, pageSize);
+            IQueryable<Product> model = db.Products;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Name.Contains(searchString) || x.Code.Contains(searchString));
+            }
+            return model.OrderByDescending(x=>x.CreatedDate).ToPagedList(page, pageSize);
         }
         public long Insert(Product product)
         {
@@ -51,6 +56,21 @@ namespace Model.Dao
                 product.ModifiedDate = DateTime.Now;
                 product.MetaKeywords = prd.MetaKeywords;
                 product.MetaDescriptions = prd.MetaDescriptions;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool Delete(long id)
+        {
+            try
+            {
+                var product = db.Products.Find(id);
+                db.Products.Remove(product);
                 db.SaveChanges();
                 return true;
             }

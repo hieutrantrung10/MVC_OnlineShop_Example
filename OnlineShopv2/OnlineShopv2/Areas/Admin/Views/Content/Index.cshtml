@@ -15,6 +15,21 @@
                 Danh mục tin tức
             </div>
             <div class="panel-body">
+                @using (Html.BeginForm("Index", "Content", FormMethod.Get))
+                {
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-md-4">
+                                <input type="text" value="@ViewBag.SearchString" class="form-control" name="searchString" />
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success">Tìm kiếm</button>
+                                <a type="submit" class="btn btn-primary" href="/Admin/Content/Create">Thêm mới</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -28,11 +43,16 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr class="success">
+                                <tr class="success" id="row_@item.ID">
                                     <td>
                                         <a href="/Admin/Content/Edit/@item.ID">Sửa</a>
                                         |
-                                        <a href="/Admin/Content/Delete/@item.ID">Xóa</a>
+                                        @Ajax.ActionLink("Xóa", "Delete", new { @id = item.ID }, new AjaxOptions
+                                        {
+                                            Confirm = "Bạn có chắc muốn xóa tin tức này ?",
+                                            OnComplete = "$('#row_" + @item.ID + "').remove()",
+                                            HttpMethod = "Delete"
+                                        })
                                     </td>
                                     <td>@item.Name</td>
                                     <td>@item.CreatedBy</td>
@@ -43,7 +63,7 @@
                             
                         </tbody>
                     </table>
-                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page}))
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page,@searchString = @ViewBag.SearchString}))
                 </div>
                 <!-- /.table-responsive -->
             </div>

@@ -12,10 +12,12 @@ namespace OnlineShopv2.Areas.Admin.Controllers
     public class ContentController : BaseController
     {
         // GET: Admin/Content
-        public ActionResult Index(int page = 1, int pageSize=10)
+        
+        public ActionResult Index(string searchString,int page = 1, int pageSize=10)
         {
             var dao = new ContentDao();
-            var model = dao.ListAllPaging(page, pageSize);
+            var model = dao.ListAllPaging(searchString,page, pageSize);
+            ViewBag.SearchString = searchString;
             return View(model as IPagedList<Content>);
         }
         [HttpGet]
@@ -75,6 +77,14 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             }
             SetViewBag(content.CategoryID);
             return View();
+        }
+
+        [HttpDelete]
+        public ActionResult Delete(long id)
+        {
+            var dao = new ContentDao();
+            dao.Delete(id);
+            return RedirectToAction("Index");
         }
         public void SetViewBag(long ? selectedId = null)
         {
