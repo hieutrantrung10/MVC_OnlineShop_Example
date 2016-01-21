@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Model.Dao;
 
 namespace OnlineShopv2.Controllers
 {
@@ -12,19 +13,23 @@ namespace OnlineShopv2.Controllers
         {
             return View();
         }
-
-        public ActionResult About()
+        [ChildActionOnly]
+        public ActionResult MainMenu()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            var model = new MenuDao().ListByGroupId(1);
+            return PartialView(model);
         }
-
-        public ActionResult Contact()
+        [ChildActionOnly]
+        public ActionResult TopMenu()
         {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            var model = new MenuDao().ListByGroupId(2);
+            return PartialView(model);
+        }
+        [ChildActionOnly]
+        public ActionResult Footer()
+        {
+            var model = new FooterDao().GetFooter();
+            return PartialView(model);
         }
     }
 }
