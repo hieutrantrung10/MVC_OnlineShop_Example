@@ -64,7 +64,6 @@ namespace Model.Dao
                 return false;
             }
         }
-
         public bool Delete(long id)
         {
             try
@@ -79,5 +78,45 @@ namespace Model.Dao
                 return false;
             }
         }
+        /// <summary>
+        /// Lấy ra danh mục các sản phẩm trên cùng danh mục
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        public List<Product> ListByCategoryId(long categoryId, ref int totalRecord, int pageIndex = 1, int pageSize = 10)
+        {
+            totalRecord = db.Products.Where(x => x.CategoryID == categoryId).Count();
+            var model = db.Products.Where(x => x.CategoryID == categoryId).OrderByDescending(x=>x.CreatedDate).Skip((pageIndex-1)*pageSize).Take(pageSize).ToList();
+            return model;
+        }
+        /// <summary>
+        /// Lấy ra danh sách các sản phẩm mới
+        /// </summary>
+        /// <param name="top"></param>
+        /// <returns></returns>
+        public List<Product> ListNewProduct(int top)
+        {
+            return db.Products.OrderByDescending(x=>x.CreatedDate).Take(top).ToList();
+        }
+        /// <summary>
+        /// Lấy ra các sản phẩm bán chạy
+        /// </summary>
+        /// <param name="top"></param>
+        /// <returns></returns>
+        public List<Product> ListFeatureProduct(int top)
+        {
+            return db.Products.Where(x => x.TopHot != null && x.TopHot > DateTime.Now).OrderByDescending(x => x.CreatedDate).Take(top).ToList();
+        }
+        /// <summary>
+        /// Lấy ra các sản phẩm liên quan
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        public List<Product> ListRelatedProducts(long productId)
+        {
+            var product = db.Products.Find(productId);
+            return db.Products.Where(x => x.ID != productId && x.CategoryID == product.CategoryID).ToList();
+        }
+        
     }
 }

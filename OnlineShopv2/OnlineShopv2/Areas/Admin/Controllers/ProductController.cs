@@ -89,5 +89,7 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             var dao = new ProductCategoryDao();
             ViewBag.CategoryID = new SelectList(dao.ListAll(),"ID","Name",selectedId);
         }
+
+       
     }
 }
