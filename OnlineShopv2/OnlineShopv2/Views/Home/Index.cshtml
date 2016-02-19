@@ -65,7 +65,7 @@
                         <p><span class="rupees">@(item.Price.HasValue ? item.Price.Value.ToString("N0") : "Liên hệ")</span></p>
                     </div>
                     <div class="add-cart">
-                        <h4><a href="@url">Thêm vào giỏ</a></h4>
+                        <h4><a href="/them-gio-hang?productId=@item.ID&quantity=1">Thêm vào giỏ</a></h4>
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -96,7 +96,7 @@
                         <p><span class="rupees">@(item.Price.HasValue ? item.Price.Value.ToString("N0") : "Liên hệ")</span></p>
                     </div>
                     <div class="add-cart">
-                        <h4><a href="@url">Thêm vào giỏ</a></h4>
+                        <h4><a href="/them-gio-hang?productId=@item.ID&quantity=1">Thêm vào giỏ</a></h4>
                     </div>
                     <div class="clear"></div>
                 </div>
