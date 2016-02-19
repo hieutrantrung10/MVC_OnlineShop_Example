@@ -58,6 +58,8 @@
     <Compile Include="Dao\ContentDao.cs" />
     <Compile Include="Dao\FooterDao.cs" />
     <Compile Include="Dao\MenuDao.cs" />
+    <Compile Include="Dao\OrderDao.cs" />
+    <Compile Include="Dao\OrderDetailDao.cs" />
     <Compile Include="Dao\ProductCategoryDao.cs" />
     <Compile Include="Dao\ProductDao.cs" />
     <Compile Include="Dao\SlideDao.cs" />

@@ -33,12 +33,36 @@ namespace OnlineShopv2
                defaults: new { controller = "About", action = "Index", id = UrlParameter.Optional },
                namespaces: new[] { "OnlineShopv2.Controllers" }
            );
+            routes.MapRoute(
+              name: "Cart",
+              url: "gio-hang",
+              defaults: new { controller = "Cart", action = "Index", id = UrlParameter.Optional },
+              namespaces: new[] { "OnlineShopv2.Controllers" }
+          );
+            routes.MapRoute(
+             name: "Payment",
+             url: "gui-don-hang",
+             defaults: new { controller = "Cart", action = "Payment", id = UrlParameter.Optional },
+             namespaces: new[] { "OnlineShopv2.Controllers" }
+         );
+            routes.MapRoute(
+              name: "Add Cart",
+              url: "them-gio-hang",
+              defaults: new { controller = "Cart", action = "AddItem", id = UrlParameter.Optional },
+              namespaces: new[] { "OnlineShopv2.Controllers" }
+          );
+            routes.MapRoute(
+             name: "Success",
+             url: "hoan-thanh",
+             defaults: new { controller = "Cart", action = "Success", id = UrlParameter.Optional },
+             namespaces: new[] { "OnlineShopv2.Controllers" }
+         );
 
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional}, 
-                namespaces:new [] {"OnlineShopv2.Controllers"} 
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },
+                namespaces: new[] { "OnlineShopv2.Controllers" }
             );
         }
     }
