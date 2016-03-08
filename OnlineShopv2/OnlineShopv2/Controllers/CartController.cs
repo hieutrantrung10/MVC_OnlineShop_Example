@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Common;
 using Model.Dao;
 using Model.EF;
 using OnlineShopv2.Models;
@@ -24,7 +26,7 @@ namespace OnlineShopv2.Controllers
             }
             return View(list);
         }
-
+       
         public JsonResult DeleteAll()
         {
             Session[Common.CommonConstants.CartSession] = null;
@@ -122,15 +124,14 @@ namespace OnlineShopv2.Controllers
             order.ShipAddress = address;
             order.ShipMobile = phoneNumber;
             order.ShipName = shipName;
-            order.ShipEmail = email;
-
-            
+            order.ShipEmail = email;      
 
             try
             {
                 var id = new OrderDao().Insert(order);
                 var cart = (List<CartItem>)Session[Common.CommonConstants.CartSession];
                 var detailDao = new OrderDetailDao();
+                decimal total = 0;
                 foreach (var item in cart)
                 {
                     var orderDetail = new OrderDetail();
@@ -139,17 +140,43 @@ namespace OnlineShopv2.Controllers
                     orderDetail.Price = item.Product.Price;
                     orderDetail.Quantity = item.Quantity;
                     detailDao.Insert(orderDetail);
+
+                    total += (item.Product.Price.GetValueOrDefault(0)*item.Quantity);
                 }
-                
+                string content = System.IO.File.ReadAllText((Server.MapPath("~/assets/client/template/neworder.html")));
+
+                content = content.Replace("{{CustomerName}}", shipName);
+                content = content.Replace("{{OrderID}}", order.ID.ToString());
+                content = content.Replace("{{PhoneNumber}}", phoneNumber);
+                content = content.Replace("{{Email}}", email);
+                content = content.Replace("{{Address}}", address);
+                content = content.Replace("{{Total}}", total.ToString("N0"));
+
+                var toEmail = ConfigurationManager.AppSettings["ToEmailAddress"].ToString();
+
+                new MailHelper().SendMail(email, "Đơn hàng mới từ HomeSHOP", content);
+                new MailHelper().SendMail(toEmail,"Đơn hàng mới từ HomeSHOP",content);
+
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return Redirect("/loi-gui-don-hang");
             }
             return Redirect("/hoan-thanh");
             
         }
 
+        ////test
+        
+        //public ActionResult PaypalPayment()
+        //{
+        //    var getData = new GetDataPaypal();
+        //    var order = getData.InformationOrder(getData.GetPayPalResponse(Request.QueryString["tx"]));
+        //    ViewBag.tx = Request.QueryString["tx"];
+        //    return View();
+        //}
+        ////end
         public ActionResult Success()
         {
             return View();

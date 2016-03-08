@@ -189,5 +189,7 @@ namespace Model.EF
                 .Property(e => e.ModifiedBy)
                 .IsUnicode(false);
         }
+
+        //public System.Data.Entity.DbSet<OnlineShopv2.Models.RegisterModel> RegisterModels { get; set; }
     }
 }
