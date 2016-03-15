@@ -117,5 +117,26 @@ namespace Model.Dao
         {
             return db.Users.Count(x => x.Email == email) > 0;
         }
+
+        public User GetByToken(string token)
+        {
+            return db.Users.SingleOrDefault(x => x.CreatedBy == token);
+        }
+
+        public bool UpdateStatus(User entity)
+        {
+            try
+            {
+                var user = db.Users.Find(entity.ID);
+                user.Status = true;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+        }
     }
 }
