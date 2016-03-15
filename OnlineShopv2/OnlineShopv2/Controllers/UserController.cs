@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BotDetect.Web.UI.Mvc;
+using Common;
 using Model.Dao;
 using Model.EF;
 using OnlineShopv2.Common;
@@ -47,12 +48,22 @@ namespace OnlineShopv2.Controllers
                     user.Email = model.Email;
                     user.Address = model.Address;
                     user.CreatedDate = DateTime.Now;
-                    user.Status = true;
+                    user.Status = false;
+                    string token = Guid.NewGuid().ToString();
+                    user.CreatedBy = token;
                     var result = dao.Insert(user);
                     if (result > 0)
                     {
                         ViewBag.Success = "Đăng ký thành công";
-                        model = new RegisterModel();
+                        string callbackUrl =
+                            System.Web.HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) +
+                            "/User/Verify/" + token;
+                        string mail =
+                            System.IO.File.ReadAllText(Server.MapPath("~/assets/client/template/ConfirmEmail.html"));
+                        mail = mail.Replace("{{Link}}", callbackUrl);
+
+                        new MailHelper().SendMail(model.Email,"Xác nhận tài kooản",mail);
+                        return RedirectToAction("Confirmation");
                     }
                     else
                     {
@@ -62,6 +73,36 @@ namespace OnlineShopv2.Controllers
             }
             return View(model);
         }
-        
+
+
+        [AllowAnonymous]
+        public ActionResult Confirmation()
+        {
+            return View();
+        }
+
+        public ActionResult Login()
+        {
+            return View();
+        }
+        public ActionResult Verify()
+        {
+            string verifystring = System.Web.HttpContext.Current.Request.Url.AbsoluteUri;
+            string tmp = verifystring.Substring(verifystring.LastIndexOf("/"));
+            string token = tmp.Split('/')[1];
+            var userdao = new UserDao();
+            var user = userdao.GetByToken(token);
+            userdao.UpdateStatus(user);
+            if (user.CreatedBy == token)
+            {
+                return RedirectToAction("Login", "User");
+            }
+            else
+            {
+                return null;
+            }
+
+
+        }
     }
 }
