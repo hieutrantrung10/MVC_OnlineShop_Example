@@ -65,3 +65,5 @@ C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineSho
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineShopv2\bin\Common.pdb
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineShopv2\bin\BotDetect.dll
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineShopv2\bin\BotDetect.Web.UI.Mvc.dll
+C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineShopv2\bin\Facebook.dll
+C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\OnlineShopv2\bin\Facebook.xml

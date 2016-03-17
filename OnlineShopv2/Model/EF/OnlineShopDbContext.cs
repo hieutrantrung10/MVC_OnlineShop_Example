@@ -190,6 +190,8 @@ namespace Model.EF
                 .IsUnicode(false);
         }
 
+        //public System.Data.Entity.DbSet<OnlineShopv2.Models.LoginModel> LoginModels { get; set; }
+
         //public System.Data.Entity.DbSet<OnlineShopv2.Models.RegisterModel> RegisterModels { get; set; }
     }
 }

@@ -9,6 +9,5 @@ C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\PagedList.xml
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\PagedList.Mvc.xml
-C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\obj\Debug\Model.dll
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\obj\Debug\Model.pdb
