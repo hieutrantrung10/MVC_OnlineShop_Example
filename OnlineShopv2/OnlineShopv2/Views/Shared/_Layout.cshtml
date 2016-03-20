@@ -14,9 +14,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <link href="/assets/client/css/bootstrap-social.css" rel="stylesheet" />
     <link href="/assets/client/css/font-awesome.min.css" rel="stylesheet" />
     <link href="/assets/client/css/bootstrap-theme.css" rel="stylesheet" />
+    <link href="/assets/client/css/jquery-ui.css" rel="stylesheet" />
     <link href="/assets/client/css/style.css" rel="stylesheet" type="text/css" media="all" />
     <link href="/assets/client/css/slider.css" rel="stylesheet" type="text/css" media="all" />
     <script src="/assets/client/js/jquery-1.12.0.min.js"></script>
+    <script src="/assets/client/js/jquery-ui.js"></script>
     @*<script type="text/javascript" src="/assets/client/js/jquery-1.7.2.min.js"></script>*@
     <script src="/assets/client/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/assets/client/js/move-top.js"></script>
@@ -67,8 +69,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             <div class="header_bottom">
                 @{Html.RenderAction("MainMenu", "Home");}
                 <div class="search_box">
-                    <form>
-                        <input type="text" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}"><input type="submit" value="">
+                    <form action="/tim-kiem" method="get">
+                        <input type="text" style="color: #000000" id="txtKeyword" name="keyword" placeholder="Nhập tên sản phẩm cần tìm"><input type="submit" value="">
                     </form>
                 </div>
                 <div class="clear"></div>
@@ -92,6 +94,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		});
     </script>
     <a href="#" id="toTop"><span id="toTopHover"> </span></a>
+    <script src="/assets/client/js/controller/baseController.js"></script>
     @RenderSection("jsFooter", required:false)
 </body>
 </html>

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Mvc;
+using System.Web.UI;
 using Model.Dao;
 using OnlineShopv2.Models;
 
@@ -20,12 +22,14 @@ namespace OnlineShopv2.Controllers
             return View();
         }
         [ChildActionOnly]
+        [OutputCache(Duration = 3600)]
         public ActionResult MainMenu()
         {
             var model = new MenuDao().ListByGroupId(1);
             return PartialView(model);
         }
         [ChildActionOnly]
+        [OutputCache(Duration = 3600)]
         public ActionResult TopMenu()
         {
             var model = new MenuDao().ListByGroupId(2);
@@ -43,6 +47,7 @@ namespace OnlineShopv2.Controllers
             return PartialView(list);
         }
         [ChildActionOnly]
+        [OutputCache(Duration = 3600)]
         public ActionResult Footer()
         {
             var model = new FooterDao().GetFooter();

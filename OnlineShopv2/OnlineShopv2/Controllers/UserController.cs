@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
+using System.Xml.Linq;
 using BotDetect.Web.UI.Mvc;
 using CKFinder.Connector;
 using Common;
@@ -66,6 +68,18 @@ namespace OnlineShopv2.Controllers
                     user.Address = model.Address;
                     user.CreatedDate = DateTime.Now;
                     user.Status = false;
+                    if (!string.IsNullOrEmpty(model.ProvinceID))
+                    {
+                        user.ProvinceID = int.Parse(model.ProvinceID);
+                    }
+                    if (!string.IsNullOrEmpty(model.DistrictID))
+                    {
+                        user.DistrictID = int.Parse(model.DistrictID);
+                    }
+                    if (!string.IsNullOrEmpty(model.VillageID))
+                    {
+                        user.VillageID = int.Parse(model.VillageID);
+                    }
                     string token = Guid.NewGuid().ToString();
                     user.CreatedBy = token;
                     var result = dao.Insert(user);
@@ -227,5 +241,72 @@ namespace OnlineShopv2.Controllers
         }
         #endregion
 
+        public JsonResult LoadProvince()
+        {
+            var xmlDoc = XDocument.Load(Server.MapPath(@"~/assets/client/data/Provinces_Data.xml"));
+
+            var xElements = xmlDoc.Element("Root").Elements("Item").Where(x => x.Attribute("type").Value == "province");
+            var list = new List<ProvinceModel>();
+            ProvinceModel province = null;
+            foreach (var item in xElements)
+            {
+                province = new ProvinceModel();
+                province.ID = int.Parse(item.Attribute("id").Value);
+                province.Name = item.Attribute("value").Value;
+                list.Add(province);
+
+            }
+            return Json(new
+            {
+                data = list,
+                status = true
+            });
+        }
+        public JsonResult LoadDistrict(int provinceID)
+        {
+            var xmlDoc = XDocument.Load(Server.MapPath(@"~/assets/client/data/Provinces_Data.xml"));
+
+            var xElement = xmlDoc.Element("Root").Elements("Item").Single(x => x.Attribute("type").Value == "province" && int.Parse(x.Attribute("id").Value) == provinceID);
+            var list = new List<DistrictModel>();
+            DistrictModel district = null;
+            foreach (var item in xElement.Elements("Item").Where(x => x.Attribute("type").Value == "district"))
+            {
+                district = new DistrictModel();
+                district.ID = int.Parse(item.Attribute("id").Value);
+                district.Name = item.Attribute("value").Value;
+                district.ProvinceID = int.Parse(xElement.Attribute("id").Value);
+                list.Add(district);
+
+            }
+            return Json(new
+            {
+                data = list,
+                status = true
+            });
+            
+        }
+        public JsonResult LoadVillage(int provinceID,int districtID)
+        {
+            var xmlDoc = XDocument.Load(Server.MapPath(@"~/assets/client/data/Provinces_Data.xml"));
+            var xElement = xmlDoc.Element("Root").Elements("Item").Single(x => x.Attribute("type").Value == "province" && int.Parse(x.Attribute("id").Value) == provinceID);
+            var xElement2 = xElement.Elements("Item").Single(x => x.Attribute("type").Value == "district" && int.Parse(x.Attribute("id").Value) == districtID);
+            var plist = new List<VillageModel>();
+            VillageModel village = null;
+            foreach (var item in xElement2.Elements("Item").Where(x => x.Attribute("type").Value == "precinct"))
+            {
+                village = new VillageModel();
+                village.ID = int.Parse(item.Attribute("id").Value);
+                village.Name = item.Attribute("value").Value;
+                village.DistrictID = int.Parse(xElement.Attribute("id").Value);
+                plist.Add(village);
+
+            }
+            return Json(new
+            {
+                data = plist,
+                status = true
+            });
+
+        }
     }
 }
