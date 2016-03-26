@@ -29,22 +29,13 @@ namespace OnlineShopv2.Areas.Admin.Controllers
         [HttpPost]
         [ValidateInput(false)]
         public ActionResult Create(Content model)
-        {
+         {
             if (ModelState.IsValid)
             {
-                //test thêm mới nội dung tin tức 29/12/2015
-                var dao = new ContentDao();
-                long id = dao.Insert(model);
-                if (id > 0)
-                {
-                    SetAlert("Thêm mới tin tức thành công!","success");
-                    return RedirectToAction("Create","Content");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Thêm tin tức không thành công!!");
-                }
-
+                var session =(UserLogin)Session[Common.CommonConstants.USER_SESSION];
+                model.CreatedBy = session.UserName;
+                new ContentDao().Create(model);
+                return RedirectToAction("Index", "Content");
             }
             SetViewBag();
             return View();
@@ -65,8 +56,8 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var dao = new ContentDao();
-                var result = dao.Update(content);
-                if (result)
+                var result = dao.Edit(content);
+                if (result!=null)
                 {
                     return RedirectToAction("Index", "Content");
                 }

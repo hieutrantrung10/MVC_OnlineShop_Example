@@ -85,12 +85,8 @@ namespace Model.EF
                 .Property(e => e.MetaDescriptions)
                 .IsFixedLength();
 
-            modelBuilder.Entity<Content>()
-                .Property(e => e.ViewCount)
-                .IsFixedLength();
-
             modelBuilder.Entity<ContentTag>()
-                .Property(e => e.ContetnID)
+                .Property(e => e.TagID)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Footer>()
@@ -189,9 +185,5 @@ namespace Model.EF
                 .Property(e => e.ModifiedBy)
                 .IsUnicode(false);
         }
-
-        //public System.Data.Entity.DbSet<OnlineShopv2.Models.LoginModel> LoginModels { get; set; }
-
-        //public System.Data.Entity.DbSet<OnlineShopv2.Models.RegisterModel> RegisterModels { get; set; }
     }
 }

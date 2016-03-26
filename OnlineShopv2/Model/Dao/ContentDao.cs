@@ -1,4 +1,6 @@
-﻿using Model.EF;
+﻿using System.Diagnostics.Eventing.Reader;
+using Common;
+using Model.EF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace Model.Dao
     public class ContentDao
     {
         OnlineShopDbContext db = null;
+        public static string USER_SESSION = "USER_SESSION";
         public ContentDao()
         {
             db = new OnlineShopDbContext();
@@ -19,8 +22,13 @@ namespace Model.Dao
         {
             return db.Contents.Find(id);
         }
+
+        public Tag GetTag(string id)
+        {
+            return db.Tags.Find(id);
+        }
         //test trả về danh sách các bài viết
-        public IEnumerable<Content> ListAllPaging(string searchString,int page, int pageSize)
+        public IEnumerable<Content> ListAllPaging(string searchString, int page, int pageSize)
         {
             IQueryable<Content> model = db.Contents;
             if (!string.IsNullOrEmpty(searchString))
@@ -29,13 +37,59 @@ namespace Model.Dao
             }
             return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
         }
+        /// <summary>
+        /// Danh sách các tin tức bên ngoài
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public IEnumerable<Content> ListAllPaging(int page, int pageSize)
+        {
+            IQueryable<Content> model = db.Contents;
+            return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
+        }
+        /// <summary>
+        /// Danh sách tin tức có tag giống nhau
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public IEnumerable<Content> ListAllByTag(string tag, int page, int pageSize)
+        {
+            var model = (from a in db.Contents
+                                         join b in db.ContentTags
+                                             on a.ID equals b.ContentID
+                                             where b.TagID == tag
+                                         select new
+                                         {
+                                             Name = a.Name,
+                                             MetaTitle = a.MetaTitle,
+                                             Image = a.Image,
+                                             Description = a.Description,
+                                             Detail = a.Detail,
+                                             CreatedDate = a.CreatedDate,
+                                             CreatedBy = a.CreatedBy,
+                                             ID= a.ID
+                                         }).AsEnumerable().Select(x=> new Content()
+                                         {
+                                             Name = x.Name,
+                                             MetaTitle = x.MetaTitle,
+                                             Image = x.Image,
+                                             Description = x.Description,
+                                             Detail = x.Detail,
+                                             CreatedBy = x.CreatedBy,
+                                             CreatedDate = x.CreatedDate,
+                                             ID = x.ID
+                                         });
+            return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
+        }
         //test thêm mới một tin tức
         public long Insert(Content content)
         {
             db.Contents.Add(content);
             db.SaveChanges();
 
-            return content.ID; 
+            return content.ID;
         }
 
         public bool Update(Content cont)
@@ -64,7 +118,7 @@ namespace Model.Dao
 
                 return false;
             }
-            
+
         }
 
         public bool Delete(long id)
@@ -80,7 +134,111 @@ namespace Model.Dao
             {
                 return false;
             }
-            
+
+        }
+
+        public long Create(Content content)
+        {
+            if (string.IsNullOrEmpty(content.MetaTitle))
+            {
+                content.MetaTitle = StringHelper.ToUnsignString(content.Name);
+            }
+            content.CreatedDate = DateTime.Now;
+            content.ViewCount = 0;
+            db.Contents.Add(content);
+            db.SaveChanges();
+
+            //Kiểm tra xử lý tag
+            if (!string.IsNullOrEmpty(content.Tags))
+            {
+                string[] tags = content.Tags.Split(',');
+                foreach (var tag in tags)
+                {
+                    var tagId = StringHelper.ToUnsignString(tag);
+                    var existedTag = this.CheckTag(tagId);
+                    //thêm bản ghi mới vào bảng Tags
+                    if (!existedTag)
+                    {
+                        this.InsertTag(tagId, tag);
+                    }
+                    //thêm mới bản ghi vào bảng contentTag
+                    this.InsertContentTag(content.ID, tagId);
+                }
+            }
+            return content.ID;
+        }
+        public long Edit(Content content)
+        {
+            if (string.IsNullOrEmpty(content.MetaTitle))
+            {
+                content.MetaTitle = StringHelper.ToUnsignString(content.Name);
+            }
+            content.CreatedDate = DateTime.Now;
+            db.SaveChanges();
+
+            //Kiểm tra xử lý tag
+            if (!string.IsNullOrEmpty(content.Tags))
+            {
+                this.RemoveAllContentTag(content.ID);
+                string[] tags = content.Tags.Split(',');
+                foreach (var tag in tags)
+                {
+                    var tagId = StringHelper.ToUnsignString(tag);
+                    var existedTag = this.CheckTag(tagId);
+                    //thêm bản ghi mới vào bảng Tags
+                    if (!existedTag)
+                    {
+                        this.InsertTag(tagId, tag);
+                    }
+                    //thêm mới bản ghi vào bảng contentTag
+                    this.InsertContentTag(content.ID, tagId);
+                }
+            }
+            return content.ID;
+        }
+
+        public void RemoveAllContentTag(long contentId)
+        {
+            db.ContentTags.RemoveRange(db.ContentTags.Where(x => x.ContentID == contentId));
+            db.SaveChanges();
+        }
+        public void InsertTag(string id, string name)
+        {
+            var tag = new Tag();
+            tag.ID = id;
+            tag.Name = name;
+            db.Tags.Add(tag);
+            db.SaveChanges();
+        }
+        public void InsertContentTag(long contentId, string tagId)
+        {
+            var contentTag = new ContentTag();
+            contentTag.ContentID = contentId;
+            contentTag.TagID = tagId;
+            db.ContentTags.Add(contentTag);
+            db.SaveChanges();
+        }
+        public bool CheckTag(string id)
+        {
+            return db.Tags.Count(x => x.ID == id) > 0;
+        }
+
+        public List<Tag> ListTag(long contentId)
+        {
+            var model = (from a in db.Tags
+                         join b in db.ContentTags
+                             on a.ID equals b.TagID
+                         where b.ContentID == contentId
+                         select new
+                         {
+                             ID = b.TagID,
+                             Name = a.Name
+                         }).AsEnumerable().Select(x => new Tag()
+                         {
+                             ID = x.ID,
+                             Name = x.Name
+                         });
+            return model.ToList();
         }
     }
 }

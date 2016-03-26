@@ -104,8 +104,7 @@ namespace OnlineShopv2.Controllers
             }
             return View(model);
         }
-
-
+        
         [AllowAnonymous]
         public ActionResult Confirmation()
         {
