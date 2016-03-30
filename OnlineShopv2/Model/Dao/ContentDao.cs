@@ -174,8 +174,23 @@ namespace Model.Dao
                 content.MetaTitle = StringHelper.ToUnsignString(content.Name);
             }
             content.CreatedDate = DateTime.Now;
+            //cause the failed may in here
+            var entity = db.Contents.Find(content.ID);
+            entity.Name = content.Name;
+            entity.MetaTitle = content.MetaTitle;
+            entity.Description = content.Description;
+            entity.Image = content.Image;
+            entity.CategoryID = content.CategoryID;
+            entity.Detail = content.Detail;
+            entity.Warranty = content.Warranty;
+            entity.ModifiedBy = content.ModifiedBy;
+            entity.ModifiedDate = DateTime.Now;
+            entity.MetaKeywords = content.MetaKeywords;
+            entity.MetaDescriptions = content.MetaDescriptions;
+            entity.Status = content.Status;
+            entity.Tags = content.Tags;
             db.SaveChanges();
-
+            //
             //Kiểm tra xử lý tag
             if (!string.IsNullOrEmpty(content.Tags))
             {

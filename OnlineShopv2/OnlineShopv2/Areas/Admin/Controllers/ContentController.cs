@@ -56,6 +56,7 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var dao = new ContentDao();
+                //var result = dao.Update(content);
                 var result = dao.Edit(content);
                 if (result!=null)
                 {

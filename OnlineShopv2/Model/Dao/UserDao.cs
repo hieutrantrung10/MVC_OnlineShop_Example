@@ -24,7 +24,7 @@ namespace Model.Dao
         public long InsertForFacebook(User entity)
         {
             var user = db.Users.SingleOrDefault(x => x.UserName == entity.UserName);
-            if (user==null)
+            if (user == null)
             {
                 db.Users.Add(entity);
                 db.SaveChanges();
@@ -41,7 +41,7 @@ namespace Model.Dao
             {
                 var user = db.Users.Find(entity.ID);
                 user.Name = entity.Name;
-                if(string.IsNullOrEmpty(entity.Password))
+                if (string.IsNullOrEmpty(entity.Password))
                 {
                     user.Password = entity.Password;
                 }
@@ -56,28 +56,52 @@ namespace Model.Dao
             {
                 return false;
             }
-            
+
         }
-        public IEnumerable<User> ListAllPaging(string searchString, int page , int pageSize)
+        public IEnumerable<User> ListAllPaging(string searchString, int page, int pageSize)
         {
             IQueryable<User> model = db.Users;
-            if(!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.UserName.Contains(searchString) || x.Name.Contains(searchString));
             }
-//UPDATE!!!!//Sử dụng thêm câu lệnh if nếu muốn lọc thêm theo các trường khác nếu muốn , làm tương tự như cấu trúc if ở trên...
+            //UPDATE!!!!//Sử dụng thêm câu lệnh if nếu muốn lọc thêm theo các trường khác nếu muốn , làm tương tự như cấu trúc if ở trên...
             return model.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
         }
         public User GetById(string userName)
         {
-            return db.Users.SingleOrDefault(x=>x.UserName == userName);
+            return db.Users.SingleOrDefault(x => x.UserName == userName);
         }
 
+        /// <summary>
+        /// Lay ra permission cua user theo usergroup
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<string> GetListCredential(string userName)
+        {
+            var user = db.Users.Single(x => x.UserName == userName);
+            var data = (from a in db.Credentials
+                join b in db.UserGroups on a.UserGroupID equals b.ID
+                join c in db.Roles on a.RoleID equals c.ID
+                where b.ID == user.GroupID
+                select new 
+                {
+                    RoleID = a.RoleID,
+                    UserGroupID = a.UserGroupID
+                }).AsEnumerable().Select(x=>new Credential()
+                {
+                    RoleID = x.RoleID,
+                    UserGroupID = x.UserGroupID
+                });
+            return data.Select(x=>x.RoleID).ToList();
+
+        } 
         public User ViewDetail(int id)
         {
             return db.Users.Find(id);
         }
-        public int Login(string userName, string passWord)
+        public int Login(string userName, string passWord, bool isLoginAdmin = false)
         {
             var result = db.Users.SingleOrDefault(x => x.UserName == userName);
             if(result == null)
@@ -86,17 +110,42 @@ namespace Model.Dao
             }
             else
             {
-                if (result.Status == false)
+                if (isLoginAdmin == true)
                 {
-                    return -1;
+                    if (result.GroupID == Common.UserConstants.ADMIN_GROUP ||
+                        result.GroupID == Common.UserConstants.MOD_GROUP)
+                    {
+                        if (result.Status == false)
+                        {
+                            return -1;
+                        }
+                        else
+                        {
+                            if (result.Password == passWord)
+                                return 1;
+                            else
+                                return -2;
+                        }
+                    }
+                    else
+                    {
+                        return -3;
+                    }
                 }
                 else
                 {
-                    if (result.Password == passWord)
-                        return 1;
-                    else 
-                        return -2;
-                }
+                    if (result.Status == false)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        if (result.Password == passWord)
+                            return 1;
+                        else
+                            return -2;
+                    }
+                }               
             }
         }
         public bool Delete(int id)
@@ -108,7 +157,7 @@ namespace Model.Dao
                 db.SaveChanges();
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -150,7 +199,7 @@ namespace Model.Dao
             {
                 return false;
             }
-            
+
         }
     }
 }

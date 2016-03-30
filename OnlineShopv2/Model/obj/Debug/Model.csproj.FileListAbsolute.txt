@@ -14,3 +14,5 @@ C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\obj
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\Common.dll
 C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\Common.pdb
+C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\System.Web.Mvc.dll
+C:\Users\Ugly Truth\documents\visual studio 2013\Projects\OnlineShopv2\Model\bin\Debug\System.Web.Mvc.xml

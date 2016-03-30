@@ -145,7 +145,7 @@ namespace OnlineShopv2.Controllers
             if (ModelState.IsValid)
             {
                 var dao = new UserDao();
-                var result = dao.Login(model.UserName, Encryptor.MD5Hash(model.Password));
+                var result = dao.Login(model.UserName, Encryptor.MD5Hash(model.Password),false);
                 if (result == 1)
                 {
                     var user = dao.GetById(model.UserName);

@@ -10,6 +10,6 @@ namespace OnlineShopv2
     {
         public long UserID { set; get; }
         public string UserName { set; get; }
-
+        public string GroupID { get; set; }
     }
 }

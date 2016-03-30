@@ -1,3 +1,5 @@
+using System.Web.Mvc;
+
 namespace Model.EF
 {
     using System;
@@ -26,6 +28,7 @@ namespace Model.EF
         public long? CategoryID { get; set; }
 
         [Column(TypeName = "ntext")]
+        [AllowHtml]
         public string Detail { get; set; }
 
         public int? Warranty { get; set; }

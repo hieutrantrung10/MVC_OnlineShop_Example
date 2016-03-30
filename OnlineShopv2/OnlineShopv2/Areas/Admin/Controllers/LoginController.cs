@@ -21,32 +21,40 @@ namespace OnlineShopv2.Areas.Admin.Controllers
             if(ModelState.IsValid)
             {
                 var dao = new UserDao();
-                var result = dao.Login(model.UserName, Encryptor.MD5Hash(model.Password));
+                var result = dao.Login(model.UserName, Encryptor.MD5Hash(model.Password),true);
                 if (result == 1)
                 {
                     var user = dao.GetById(model.UserName);
                     var userSession = new UserLogin();
                     userSession.UserName = user.UserName;
                     userSession.UserID = user.ID;
+                    userSession.GroupID = user.GroupID;
+
+                    var listCredentials = dao.GetListCredential(model.UserName);
+                    Session.Add(CommonConstants.SESSION_CREDENTIALS,listCredentials);
 
                     Session.Add(CommonConstants.USER_SESSION, userSession);
                     return RedirectToAction("Index", "Home");
                 }
                 else if(result == 0)
                 {
-                    ModelState.AddModelError("", "Your account is INVALID!!");
+                    ModelState.AddModelError("", "Tài khoản của bạn không đúng!!");
                 }
                 else if (result == -1)
                 {
-                    ModelState.AddModelError("", "Your account is BLOCKED!!");
+                    ModelState.AddModelError("", "Tài khoản của bạn đang bị khóa!!");
                 }
                 else if (result == -2)
                 {
-                    ModelState.AddModelError("", "Your password is WRONG!!");
+                    ModelState.AddModelError("", "Mật khẩu của bạn chưa đúng!!");
+                }
+                else if (result == -3)
+                {
+                    ModelState.AddModelError("", "Bạn không có quyền đăng nhập vào đây!!");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Can not LOG IN !!");
+                    ModelState.AddModelError("", "Không thể đăng nhập!!");
                 }
             }
             return View("Index");

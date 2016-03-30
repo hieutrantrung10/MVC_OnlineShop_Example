@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Common;
 using Model.Dao;
 using Model.EF;
+using OnlineShopv2.Common;
 using OnlineShopv2.Models;
 using System.Web.Script.Serialization;
 
@@ -117,6 +118,7 @@ namespace OnlineShopv2.Controllers
             return View(list);
         }
         [HttpPost]
+        //[HasCredential(RoleID = "SEND_CART")]
         public ActionResult Payment(string shipName,string address,string phoneNumber,string email)
         {
             var order = new Order();
